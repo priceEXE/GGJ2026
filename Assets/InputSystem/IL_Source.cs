@@ -226,11 +226,15 @@ public class IL_Source : InputLayer
 
         Vector2 move = new Vector2(moveX, moveY);
 
-        // 键鼠没有真正的 XYAB，这里映射到主轨道的动作键
-        ButtonState padX = GetRawButtonState(KeyCode.J); // Attack
-        ButtonState padY = GetRawButtonState(KeyCode.K); // Defense
-        ButtonState padA = GetRawButtonState(KeyCode.Space); // Space/Confirm
-        ButtonState padB = GetRawButtonState(KeyCode.X); // Cancel
+        // 键鼠没有真正的 XYAB，根据用户要求映射：
+        // PadX：J，左键
+        // PadY：K，右键
+        // PadA：空格、回车
+        // PadB：L、E、Q
+        ButtonState padX = GetRawButtonState(KeyCode.J, KeyCode.Mouse0);
+        ButtonState padY = GetRawButtonState(KeyCode.K, KeyCode.Mouse1);
+        ButtonState padA = GetRawButtonState(KeyCode.Space, KeyCode.Return);
+        ButtonState padB = GetRawButtonState(KeyCode.L, KeyCode.E, KeyCode.Q);
 
         SetPlayerInput(slot, ref frame, move, padX, padY, padA, padB);
     }
@@ -434,13 +438,24 @@ public class IL_Source : InputLayer
     // 工具方法
     // ========================================================================
 
-    private ButtonState GetRawButtonState(KeyCode key)
+    private ButtonState GetRawButtonState(params KeyCode[] keys)
     {
+        bool down = false;
+        bool hold = false;
+        bool up = false;
+
+        foreach (var key in keys)
+        {
+            if (Input.GetKeyDown(key)) down = true;
+            if (Input.GetKey(key)) hold = true;
+            if (Input.GetKeyUp(key)) up = true;
+        }
+
         return new ButtonState
         {
-            Down = Input.GetKeyDown(key),
-            Hold = Input.GetKey(key),
-            Up = Input.GetKeyUp(key)
+            Down = down,
+            Hold = hold,
+            Up = up
         };
     }
 
