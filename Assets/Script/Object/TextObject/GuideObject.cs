@@ -3,7 +3,7 @@ using System.Collections;
 using DG.Tweening;
 using UnityEngine;
 
-namespace TapTap2025
+namespace GGJ2026
 {
     public class GuideObject : MonoBehaviour
     {

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace TapTap2025
+namespace GGJ2026
 {
     [Serializable]
     public class PanelConfig

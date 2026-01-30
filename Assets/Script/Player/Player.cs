@@ -8,7 +8,7 @@ using MemoFramework.Extension;
 using M2;
 using Unity.VisualScripting;
 
-namespace TapTap2025
+namespace GGJ2026
 {
     public class Player : MonoBehaviour
     {

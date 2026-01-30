@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace TapTap2025
+namespace GGJ2026
 {
     [RequireComponent(typeof(IAudioObject))]
     [RequireComponent(typeof(AudioSource))]

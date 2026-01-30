@@ -6,7 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace TapTap2025
+namespace GGJ2026
 {
     public class GuideTextUI : MonoBehaviour
     {

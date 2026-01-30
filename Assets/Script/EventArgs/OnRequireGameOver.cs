@@ -1,6 +1,6 @@
 using MemoFramework;
 
-namespace TapTap2025
+namespace GGJ2026
 {
     public class OnRequireGameOver : MFEventArgs
     {

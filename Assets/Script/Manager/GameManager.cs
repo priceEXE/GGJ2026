@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace TapTap2025
+namespace GGJ2026
 {
     public class GameManager : MonoBehaviour
     {
