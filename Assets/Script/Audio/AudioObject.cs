@@ -1,0 +1,18 @@
+using UnityEngine;
+
+namespace TapTap2025
+{
+    [RequireComponent(typeof(IAudioObject))]
+    [RequireComponent(typeof(AudioSource))]
+    public class AudioObject
+    {
+        private IAudioObject audioObject;
+        private AudioSource au;
+        private AudioClip clip;
+    }
+
+    public interface IAudioObject
+    {
+        
+    }
+}
