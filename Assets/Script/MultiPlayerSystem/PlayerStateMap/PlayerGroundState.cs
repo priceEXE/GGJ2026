@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace GGJ2026
 {
     public class PlayerGroundState : PlayerState
@@ -31,6 +33,11 @@ namespace GGJ2026
             {
                 owner.stateMachine.ChangeState(PlayerStates.Jump);
             }
+        }
+        public override void Exit()
+        {
+            base.Exit();
+            owner.lastGroundedTime = Time.time;
         }
     }
 }

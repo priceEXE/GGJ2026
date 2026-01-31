@@ -12,7 +12,7 @@ namespace GGJ2026
         public static float MoveSpeed = 8f;
         
         /// <summary>空中速度改变空控制倍率（相对于地面速度）</summary>
-        public static float AirSpeedMultiplier = 0.05f;
+        public static float AirSpeedMultiplier = 0.5f;
         
         /// <summary>最大运动速率（速度上限）</summary>
         public static float MaxSpeed = 20f;
@@ -45,15 +45,18 @@ namespace GGJ2026
         /// <summary>蹬墙跳水平分量</summary>
         public static float WallJumpHorizontal = 5f;
         
-        /// <summary>蹬墙跳竖直分量</summary>
+        /// <summary>墙跳垂直力度</summary>
         public static float WallJumpVertical = 12f;
+        
+        /// <summary>墙跳后的输入锁定时间（防止立即吸回墙壁）</summary>
+        public static float WallJumpInputLock = 0.04f;
 
         // ========== 碰撞检测 ==========
         /// <summary>地面检测距离</summary>
-        public static float GroundCheckDistance = 0.5f;
+        public static float GroundCheckDistance = 0.55f;
         
-        /// <summary>墙壁检测距离</summary>
-        public static float WallCheckDistance = 0.5f;
+        /// <summary>墙壁检测距离（用于被动物理检测：防穿墙、冲刺撞墙等）</summary>
+        public static float WallCheckDistance = 0.55f;
 
         // ========== 墙壁滑行 ==========
         /// <summary>墙壁滑行速度倍率</summary>

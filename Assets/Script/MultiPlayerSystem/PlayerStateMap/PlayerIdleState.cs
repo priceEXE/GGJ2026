@@ -12,6 +12,7 @@ namespace GGJ2026.PlayerStateMap
         public override void Enter()
         {
             base.Enter();
+            owner.animeController?.PlayAnimation(Gameplay.AnimeAndCostume.SpineAnimations.None, true);
             owner.SetVelocity(0,owner.rb.velocity.y);
         }
 

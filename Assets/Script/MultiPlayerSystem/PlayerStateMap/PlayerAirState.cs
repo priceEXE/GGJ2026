@@ -43,14 +43,18 @@ namespace GGJ2026
             }
 
             // ========== 墙壁滑行检测 ==========
-            bool pressingTowardWall = owner.moveValue.x * owner.FacingDirection > 0;
+            // ========== 墙壁滑行检测 ==========
+            // 不再需要检测 pressingTowardWall，因为 WallGrabDetected 已经包含了输入检测
             float timeSinceJump = Time.time - owner.lastJumpTime;
             bool jumpGracePeriodOver = timeSinceJump > 0.1f;
             
             // 只在明显下降时才能粘墙（避免平台边缘被抓住）
-            bool isFalling = owner.rb.velocity.y < -0.5f;
+            // 修正：由于我们使用了严格的法线检测 (Abs(x) > Abs(y))，不再需要 -0.5f 的阈值
+            // 改为 < 0.1f 以消除死区，确保只要接触墙壁且未大幅上升即可抓墙
+            bool isFalling = owner.rb.velocity.y < 0.1f;
             
-            if (owner.WallDetected && owner.stateInfo.canSlide && isFalling && pressingTowardWall && jumpGracePeriodOver)
+            // 使用 WallGrabDetected 进行主动蹬墙检测
+            if (owner.WallGrabDetected && owner.stateInfo.canSlide && isFalling && jumpGracePeriodOver)
             {
                 owner.stateMachine.ChangeState(PlayerStates.Slide);
                 return;

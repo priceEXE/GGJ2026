@@ -205,7 +205,13 @@ namespace Gameplay.AnimeAndCostume
         /// </summary>
         public void PlayAnimation(SpineAnimations anim, bool loop = true)
         {
-            if (anim == SpineAnimations.None || skeletonAnimation == null) return;
+            if (skeletonAnimation == null) return;
+
+            if (anim == SpineAnimations.None)
+            {
+                skeletonAnimation.AnimationState.ClearTracks();
+                return;
+            }
 
             string animName = anim.ToString();
             skeletonAnimation.AnimationState.SetAnimation(0, animName, loop);

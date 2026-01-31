@@ -7,6 +7,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
+using Gameplay.AnimeAndCostume;
+
 namespace GGJ2026
 {
     public class PlayerInstance : MonoBehaviour
@@ -14,6 +16,7 @@ namespace GGJ2026
         public string Name;
         public PlayerStateMachine stateMachine;
         public AnimationManager animaMgr;
+        public CharacterAnimeController animeController;
         public Rigidbody2D rb;
         public IActor actor;
         private Collider2D col;
@@ -31,6 +34,7 @@ namespace GGJ2026
         public float lastJumpTime; // 记录最后一次跳跃的时间
         public float lastWallJumpTime; // 记录最后一次墙跳的时间
         public float lastWallSlideTime; // 记录最后一次离开墙壁的时间
+        public float lastGroundedTime; // 记录最后一次在地面的时间
         public int wallJumpDirection; // 墙跳的方向（1 或 -1）
         
         // 二段跳
@@ -60,6 +64,8 @@ namespace GGJ2026
             Debug.Log(name + "switch to custom action map");
             
             animaMgr = new AnimationManager(GetComponentInChildren<Animator>());
+            animeController = GetComponentInChildren<CharacterAnimeController>();
+            if (animeController == null) Debug.LogError($"{name} failed to find CharacterAnimeController!");
             stateInfo = GetComponent<PlayerStateInfo>();
             
             // 检查必需组件
@@ -132,16 +138,100 @@ namespace GGJ2026
             FacingDirection *= -1;
         }
         
+        public bool WallGrabDetected { get; private set; } // 主动蹬墙检测
+
         private void HandleCollisionDetection()
         {
-            GroundDetected = Physics2D.Raycast(transform.position, Vector2.down, stateInfo.groundCheckDistance, groundLayer);
-            WallDetected = Physics2D.Raycast(transform.position, Vector2.right * FacingDirection, stateInfo.wallCheckDistance, groundLayer);
+            UpdateGroundCheck();
+            UpdatePassiveWallCheck();
+            UpdateActiveWallGrabCheck();
         }
 
+        private void UpdateGroundCheck()
+        {
+            GroundDetected = Physics2D.Raycast(transform.position, Vector2.down, stateInfo.groundCheckDistance, groundLayer);
+        }
+
+        private void UpdatePassiveWallCheck()
+        {
+            // ============ 墙壁检测预计算 ============
+            float bodyHeight = col.bounds.size.y;
+            Vector2 wallCheckOrigin = (Vector2)transform.position + Vector2.up * (bodyHeight * 0.5f);
+
+            // 2. 被动墙壁检测 (WallDetected) - 用于冲刺撞墙等被动物理逻辑
+            // 依旧基于朝向 (FacingDirection)
+            WallDetected = Physics2D.Raycast(wallCheckOrigin, Vector2.right * FacingDirection, stateInfo.wallCheckDistance, groundLayer);
+        }
+
+        private void UpdateActiveWallGrabCheck()
+        {
+            // 3. 主动蹬墙检测 (WallGrabDetected) - 用于爬墙/蹬墙跳
+            WallGrabDetected = false;
+            
+            // 无输入则不检测
+            if (Mathf.Abs(moveValue.x) <= 0.1f) return;
+
+            float inputDir = Mathf.Sign(moveValue.x);
+            float scanDistance = 0.1f;
+
+            // 设置过滤条件：只检测 Ground 层
+            ContactFilter2D filter = new ContactFilter2D();
+            filter.SetLayerMask(groundLayer);
+            filter.useLayerMask = true;
+
+            RaycastHit2D[] results = new RaycastHit2D[1];
+            
+            // 执行投射
+            int hitCount = col.Cast(Vector2.right * inputDir, filter, results, scanDistance);
+
+            if (hitCount > 0)
+            {
+                RaycastHit2D hit = results[0];
+                Vector2 normal = hit.normal;
+
+                // 1. 法线过滤：必须是侧面墙壁 (Abs(x) > Abs(y))
+                bool isSideWall = Mathf.Abs(normal.x) > Mathf.Abs(normal.y);
+                
+                // 2. 平台过滤：(移除)
+                // 用户反馈需要抓取单向 EdgeCollider 墙壁。
+                // 依赖严格的法线判定来过滤地面。
+                
+                if (isSideWall)
+                {
+                    WallGrabDetected = true;
+                }
+            }
+        }
         private void OnDrawGizmos()
         {
+            if (col == null) return;
+            
             Gizmos.DrawLine(transform.position, transform.position + new Vector3(0,-stateInfo.groundCheckDistance,0));
-            Gizmos.DrawLine(transform.position, transform.position + new Vector3(stateInfo.wallCheckDistance, 0) * FacingDirection);// (_isFacingRight ? 1 : -1)
+            
+            // 显示墙壁检测射线（从身体中部）
+            float bodyHeight = col.bounds.size.y;
+            Vector3 wallCheckOrigin = transform.position + Vector3.up * (bodyHeight * 0.5f);
+            
+            // 被动检测 (红)
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(wallCheckOrigin, wallCheckOrigin + new Vector3(stateInfo.wallCheckDistance, 0) * FacingDirection);
+            
+            // 主动检测 (绿) - 仅当有输入时显示
+            if (Application.isPlaying && Mathf.Abs(moveValue.x) > 0.1f)
+            {
+                Gizmos.color = Color.green;
+                float scanDistance = 0.1f;
+                float inputDir = Mathf.Sign(moveValue.x);
+                
+                // 可视化 Cast 效果
+                // 画出目标位置的碰撞体 bounds
+                Vector3 center = col.bounds.center;
+                Vector3 targetCenter = center + (Vector3)(Vector2.right * inputDir * scanDistance);
+                
+                Gizmos.DrawWireCube(targetCenter, col.bounds.size);
+                Gizmos.DrawLine(center, targetCenter);
+            }
+            Gizmos.color = Color.white;
         }
 
         public Vector2 GetVelocity()

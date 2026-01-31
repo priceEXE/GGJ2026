@@ -37,11 +37,14 @@ namespace GGJ2026
             if (owner.PressJumpKey())
             {
                 owner.stateMachine.ChangeState(PlayerStates.WallJump);
+                return; // 重要：立即返回，防止后续逻辑覆盖状态
             }
 
-            if (!owner.WallDetected)
+            // 如果不再主动抓墙 (WallGrabDetected 为 false)，则退出滑行状态
+            if (!owner.WallGrabDetected)
             {
                 owner.stateMachine.ChangeState(PlayerStates.Fall);
+                return;
             }
 
             // 如果玩家松开朝向墙壁的按键，立即脱离墙壁
@@ -71,9 +74,22 @@ namespace GGJ2026
             {
                 owner.SetVelocity(0, owner.rb.velocity.y);
             }
+            if (owner.moveValue.y < 0)
+            {
+                owner.SetVelocity(0, owner.rb.velocity.y);
+            }
             else
             {
-                owner.SetVelocity(owner.moveValue.x, owner.rb.velocity.y * owner.stateInfo.slideSpeedMulti);
+                // 如果是上升阶段 (velocity.y > 0)，不应用摩擦力，允许保留墙跳冲量
+                if (owner.rb.velocity.y > 0)
+                {
+                    owner.SetVelocity(owner.moveValue.x, owner.rb.velocity.y);
+                }
+                else
+                {
+                    // 下落阶段才应用滑墙摩擦
+                    owner.SetVelocity(owner.moveValue.x, owner.rb.velocity.y * owner.stateInfo.slideSpeedMulti);
+                }
             }
         }
     }
