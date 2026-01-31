@@ -1,12 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEngine;
 namespace Gameplay
 {
     public interface IActor
     {
-        
+        PlayerInfo GetPlayerInfo();
     }
     /// <summary>
     /// 玩家属性结构体
@@ -29,7 +25,7 @@ namespace Gameplay
         /// <param name="dest"></param>
         /// <param name="scr"></param>
         /// <returns></returns>
-        public static PlayerInfo operator + (PlayerInfo dest, PlayerInfo scr)
+        public static PlayerInfo operator+(PlayerInfo dest, PlayerInfo scr)
         {
             PlayerInfo result = new PlayerInfo();
             result.m_moveSpeed = dest.m_moveSpeed + scr.m_moveSpeed;
@@ -38,13 +34,28 @@ namespace Gameplay
             result.m_groundStickiness = dest.m_groundStickiness + scr.m_groundStickiness;
             return result;
         }
-        public static PlayerInfo operator -(PlayerInfo dest, PlayerInfo scr)
+        public static PlayerInfo operator-(PlayerInfo dest, PlayerInfo scr)
         {
             PlayerInfo result = new PlayerInfo();
             result.m_moveSpeed = dest.m_moveSpeed - scr.m_moveSpeed;
             result.m_jumpForce = dest.m_jumpForce - scr.m_jumpForce;
             result.m_HitPrecentage = dest.m_HitPrecentage - scr.m_HitPrecentage;
             result.m_groundStickiness = dest.m_groundStickiness - scr.m_groundStickiness;
+            return result;
+        }
+        /// <summary>
+        /// 重写与运算符设置覆盖玩家属性（弃用等值赋值覆盖）
+        /// </summary>
+        /// <param name="dest"></param>
+        /// <param name="scr"></param>
+        /// <returns></returns>
+        public static PlayerInfo operator&(PlayerInfo dest, PlayerInfo scr)
+        {
+            PlayerInfo result = new PlayerInfo();
+            result.m_moveSpeed = dest.m_moveSpeed;
+            result.m_jumpForce = dest.m_jumpForce;
+            result.m_HitPrecentage = dest.m_HitPrecentage;
+            result.m_groundStickiness = dest.m_groundStickiness;
             return result;
         }
     }

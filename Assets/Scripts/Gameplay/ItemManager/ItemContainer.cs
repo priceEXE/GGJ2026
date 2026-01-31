@@ -1,18 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Toolbars;
-using UnityEngine;
 namespace Gameplay
 {
     public class ItemContainer
     {
         private List<Item> m_itemList;
+        private HashSet<string> m_tags;
+        public int m_ItemContainerCount => m_itemList.Count;
         /// <summary>
         /// 构造函数
         /// </summary>
         public ItemContainer()
         {
             m_itemList = new List<Item>();
+            m_tags = new HashSet<string>();
         }
         /// <summary>
         /// 添加一个Item，并触发物品获得回调
@@ -23,6 +24,14 @@ namespace Gameplay
         public void AddItem(IActor actor, Item item)
         {
             item.m_itemCurrentDuration = 0f;
+            int idx = m_itemList.FindIndex(i => i.m_itemName == item.m_itemName);
+            if(idx >= 0 && !item.m_itemIgnoreDuration)
+            {
+                var existing = m_itemList[idx];
+                existing.m_itemCurrentDuration = 0f;
+                m_itemList[idx] = existing;
+                return;
+            }
             m_itemList.Add(item);
             item.m_onItemEnter?.Invoke(actor, item);
         }
@@ -35,7 +44,7 @@ namespace Gameplay
         public void RemoveItem(IActor actor, Item item)
         {
             if (m_itemList == null || m_itemList.Count == 0) return;
-            int idx = m_itemList.FindIndex(i => i.m_itemName == item.m_itemName && i.m_itemIconPath == item.m_itemIconPath);
+            int idx = m_itemList.FindIndex(i => i.m_itemName == item.m_itemName);
             if (idx < 0) return;
             var existing = m_itemList[idx];
             existing.m_onItemQuit?.Invoke(actor, existing);
@@ -54,6 +63,20 @@ namespace Gameplay
         {
             if (m_itemList == null || m_itemList.Count == 0) return;
             List<Item> toRemove = new List<Item>();
+            if(actor is Player player)
+            {
+                for (int i = 0; i < m_itemList.Count; i++)
+                {
+                    var it = m_itemList[i];
+                    if (it.m_itemName == player.m_weaponColder.m_weaponInfo.m_weaponName && 
+                        it.m_enableAmmoCount &&
+                        player.m_weaponColder.ammoCounter <= 0)
+                    {
+
+                        toRemove.Add(it);
+                    }
+                }
+            }
             float dt = deltaTime;
             for (int i = 0; i < m_itemList.Count; i++)
             {
@@ -76,13 +99,37 @@ namespace Gameplay
             {
                 foreach (var rem in toRemove)
                 {
-                    int idx = m_itemList.FindIndex(i => i.m_itemName == rem.m_itemName && i.m_itemIconPath == rem.m_itemIconPath);
+                    int idx = m_itemList.FindIndex(i => i.m_itemName == rem.m_itemName);
                     if (idx < 0) continue;
                     var existing = m_itemList[idx];
                     existing.m_onItemQuit?.Invoke(actor, existing);
                     m_itemList.RemoveAt(idx);
                 }
             }
+        }
+        public Item this[int index]
+        {
+            get
+            {
+                if(index < 0 || index >= m_itemList.Count)
+                {
+                    return default;
+                }
+                return m_itemList[index];
+            }
+        }
+
+        public void AddTag(string tag)
+        {
+            m_tags.Add(tag);
+        }
+        public void RemoveTag(string tag)
+        {
+            m_tags.Remove(tag);
+        }
+        public bool HasTag(string tag)
+        {
+            return m_tags.Contains(tag);
         }
     }
     

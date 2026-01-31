@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 namespace Gameplay
 {
@@ -15,6 +13,7 @@ namespace Gameplay
         public float m_HitPrecentageIncrease;
         //武器子弹预制体
         public GameObject m_bulletPrefab;
+
         public static WeaponInfo operator +(WeaponInfo dest, WeaponInfo scr)
         {
             WeaponInfo result = new WeaponInfo();
@@ -32,10 +31,24 @@ namespace Gameplay
     }
     public class WeaponColder
     {
+        public IActor m_owner;
         //武器信息
-        public WeaponInfo m_weaponInfo; 
+        public WeaponInfo m_weaponInfo;
+        //启用忽略弹药计数 
+        public bool ignoreAmmoCounter;
+        //弹药计数
+        public int ammoCounter;
         //是否可以触发射击
-        public bool ableToTrigger => m_weaponInfo.m_currentColdDuration >= m_weaponInfo.m_coldDuration;
+        public bool ableToTrigger => m_weaponInfo.m_currentColdDuration >= m_weaponInfo.m_coldDuration && ammoCounter > 0;
+        /// <summary>
+        /// 构造函数注入依赖
+        /// </summary>
+        /// <param name="actor"></param>
+        public WeaponColder(IActor actor)
+        {
+            m_owner = actor;
+        }
+        
         /// <summary>
         /// 更新事件函数
         /// </summary>
@@ -46,6 +59,15 @@ namespace Gameplay
             {
                 m_weaponInfo.m_currentColdDuration += deltaTime;
             }
+        }
+        public void OnFire()
+        {
+            m_weaponInfo.m_currentColdDuration = 0f;
+            if(ignoreAmmoCounter)
+            {
+                return;
+            }
+            ammoCounter--;
         }
     }
     

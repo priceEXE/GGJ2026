@@ -17,4 +17,8 @@ public class Player : MonoBehaviour, IActor
         m_weaponColder.OnUpdate(Time.deltaTime);
         m_itemContainer.OnUpdate(this, Time.deltaTime);
     }
+    public PlayerInfo GetPlayerInfo()
+    {
+        return m_playerInfo;
+    }
 }
