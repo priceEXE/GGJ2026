@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GGJ2026.PlayerStateMap
+namespace GGJ2026
 {
     public class PlayerIdleState : PlayerGroundState
     {

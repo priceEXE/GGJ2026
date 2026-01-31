@@ -952,7 +952,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1648923621283159416, guid: 0df50f8b8ef6ef44a80da661dace2486, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5538610661048421693, guid: 0df50f8b8ef6ef44a80da661dace2486, type: 3}
+      propertyPath: canSlide
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5538610661048421693, guid: 0df50f8b8ef6ef44a80da661dace2486, type: 3}
+      propertyPath: dashSpeed
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5538610661048421693, guid: 0df50f8b8ef6ef44a80da661dace2486, type: 3}
+      propertyPath: dashDuration
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 7862362011521778583, guid: 0df50f8b8ef6ef44a80da661dace2486, type: 3}
       propertyPath: m_LocalPosition.x
