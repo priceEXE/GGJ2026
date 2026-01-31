@@ -11,7 +11,6 @@ namespace GGJ2026
         [Header("UI Elements")] 
         [SerializeField] private Button EnterGame_Btn;
         [SerializeField] private Button TestGame_Btn;
-        [SerializeField] private Button ContinueGame_Btn;
         [SerializeField] private Button ExitGame_Btn;
         
 
@@ -34,7 +33,6 @@ namespace GGJ2026
         private void RegisterListener()
         {
             EnterGame_Btn.onClick.AddListener(ClickEnter);
-            ContinueGame_Btn.onClick.AddListener(ClickContinue);
             ExitGame_Btn.onClick.AddListener(ClickExit);
             TestGame_Btn.onClick.AddListener(ClickTest);
         }
@@ -44,17 +42,10 @@ namespace GGJ2026
             EnterGame_Btn.onClick.RemoveListener(ClickEnter);
             ExitGame_Btn.onClick.RemoveListener(ClickExit);
             TestGame_Btn.onClick.RemoveListener(ClickTest);
-            ContinueGame_Btn.onClick.RemoveListener(ClickContinue);
         }
         
         private void ClickEnter()
         {
-            MF.Event.Fire(this, OnRequireEnterGame.Create());
-        }
-        
-        private void ClickContinue()
-        {
-            // SaveSystem.loadWhenEnterGame = true;
             MF.Event.Fire(this, OnRequireEnterGame.Create());
         }
 

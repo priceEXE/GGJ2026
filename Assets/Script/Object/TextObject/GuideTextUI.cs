@@ -13,6 +13,7 @@ namespace GGJ2026
         public TextMeshProUGUI Ttext;
         private RectTransform recttrans;
         private bool isShowing;
+        
 
         public void OnEnable()
         {

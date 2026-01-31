@@ -373,7 +373,7 @@ GameObject:
   - component: {fileID: 473926340649617263}
   - component: {fileID: 9162699442682337710}
   m_Layer: 5
-  m_Name: Setting
+  m_Name: Test
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -842,7 +842,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u8BBE\u7F6E"
+  m_text: "\u6D4B\u8BD5"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 47ec3d50beb53aa4688b3387384944d7, type: 2}
   m_sharedMaterial: {fileID: -8886847551303409941, guid: 47ec3d50beb53aa4688b3387384944d7, type: 2}
@@ -1010,5 +1010,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EnterGame_Btn: {fileID: 848450482583569096}
   TestGame_Btn: {fileID: 0}
-  ContinueGame_Btn: {fileID: 0}
   ExitGame_Btn: {fileID: 9206348839090547078}

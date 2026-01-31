@@ -18,7 +18,6 @@ public class PlayerController2D : MonoBehaviour
     public List<Sprite> BoxSprites = new List<Sprite>();
     
     [SerializeField] private AudioSource _audioSource;
-    private 
 
     // Use this for initialization
     void Start()

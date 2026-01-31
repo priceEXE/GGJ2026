@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace GGJ2026
 {
@@ -19,6 +21,9 @@ namespace GGJ2026
         }
         private Player _player;
         public GuideTextUI guideTextUI;
+        // public PlayerIM input;
+        //public Dictionary<string, InputAction> playerMaps = new (){{"P1", input.P1}}
+        // public PlayerInputManager playerInputManager;
         public Player player
         {
             get

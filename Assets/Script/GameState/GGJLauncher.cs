@@ -4,7 +4,7 @@ using MemoFramework.GameState;
 
 namespace GGJ2026
 {
-    public class TapTapLauncher : MFLauncher
+    public class GGJLauncher : MFLauncher
     {
         public override void InitGameStatesFsm(GameStateComponent gameStateComponent)
         {
