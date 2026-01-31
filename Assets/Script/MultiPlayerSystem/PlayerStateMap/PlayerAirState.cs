@@ -45,6 +45,7 @@ namespace GGJ2026
             // ========== 墙壁滑行检测 ==========
             bool pressingTowardWall = owner.moveValue.x * owner.FacingDirection > 0;
             float timeSinceJump = Time.time - owner.lastJumpTime;
+            bool jumpGracePeriodOver = timeSinceJump > 0.1f;
             
             // 只在明显下降时才能粘墙（避免平台边缘被抓住）
             bool isFalling = owner.rb.velocity.y < -0.5f;
