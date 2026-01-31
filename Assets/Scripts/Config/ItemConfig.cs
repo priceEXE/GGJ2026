@@ -87,6 +87,15 @@ public class ItemConfig
             m_coldDuration = 0.5f,
             m_HitPrecentageIncrease = 0.2f,
             m_bulletPrefab = null,//需配置子弹预制体,当前为空
+            m_onWeaponFire = (actor, weaponInfo) =>
+            {
+                WeaponHandler.OnWeaponFire(actor, weaponInfo);
+            },
+            m_itemBulletInfo = new BulletInfo
+            {
+                m_speed = 10f,
+                m_gravityScale = 1f,
+            },
         },
         m_enableAmmoCount = true,//武器类物品启用弹药数量计算方式
         m_ammoCount = 30,//初始弹药数量

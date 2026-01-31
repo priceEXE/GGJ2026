@@ -1,6 +1,7 @@
 using UnityEngine;
 namespace Gameplay
 {
+    public delegate void OnWeaponFire(IActor actor,WeaponInfo weaponInfo);
     public struct WeaponInfo
     {
         //武器名称
@@ -13,6 +14,10 @@ namespace Gameplay
         public float m_HitPrecentageIncrease;
         //武器子弹预制体
         public GameObject m_bulletPrefab;
+        //武器射击回调
+        public OnWeaponFire m_onWeaponFire;
+        //物品使用的子弹
+        public BulletInfo m_itemBulletInfo;
 
         public static WeaponInfo operator +(WeaponInfo dest, WeaponInfo scr)
         {
@@ -60,6 +65,9 @@ namespace Gameplay
                 m_weaponInfo.m_currentColdDuration += deltaTime;
             }
         }
+        /// <summary>
+        /// 射击事件函数
+        /// </summary>
         public void OnFire()
         {
             m_weaponInfo.m_currentColdDuration = 0f;
@@ -68,6 +76,7 @@ namespace Gameplay
                 return;
             }
             ammoCounter--;
+            m_weaponInfo.m_onWeaponFire?.Invoke(m_owner, m_weaponInfo);
         }
     }
     

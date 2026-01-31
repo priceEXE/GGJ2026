@@ -22,7 +22,6 @@ namespace Gameplay
         //物品丢弃回调
         public OnItemQuit m_onItemQuit;
 
-
         //物品提供的玩家属性修改
         public PlayerInfo m_itemPlayerInfo;
         //物品提供的武器属性修改
@@ -42,6 +41,7 @@ namespace Gameplay
         public bool m_isSpecialItem;
         //物品持有时施加的标记
         public string m_tag;
+
     };
 
     

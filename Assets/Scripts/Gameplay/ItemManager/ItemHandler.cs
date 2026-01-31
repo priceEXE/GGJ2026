@@ -57,6 +57,7 @@ namespace Gameplay
                     }
                 }
                 player.m_weaponColder.m_weaponInfo = item.m_itemWeaponInfo;
+                player.m_weaponColder.m_weaponInfo.m_currentColdDuration = item.m_itemWeaponInfo.m_coldDuration;
                 player.m_weaponColder.ammoCounter = item.m_ammoCount;
             }
         }
@@ -142,6 +143,30 @@ namespace Gameplay
             if (actor is Player player)
             {
                 player.m_itemContainer.RemoveTag(item.m_tag);
+            }
+        }
+        /// <summary>
+        /// 提升子弹属性（增量更新）
+        /// </summary>
+        /// <param name="actor"></param>
+        /// <param name="item"></param>
+        public static void IncreaseBulletInfo(IActor actor, Item item)
+        {
+            if (actor is Player player)
+            {
+                player.m_weaponColder.m_weaponInfo.m_itemBulletInfo += item.m_itemWeaponInfo.m_itemBulletInfo;
+            }
+        }
+        /// <summary>
+        /// 还原子弹属性（增量更新）
+        /// </summary>
+        /// <param name="actor"></param>
+        /// <param name="item"></param>
+        public static void RevertBulletInfo(IActor actor, Item item)
+        {
+            if (actor is Player player)
+            {
+                player.m_weaponColder.m_weaponInfo.m_itemBulletInfo -= item.m_itemWeaponInfo.m_itemBulletInfo;
             }
         }
     }

@@ -1,8 +1,10 @@
+using UnityEngine;
 namespace Gameplay
 {
     public interface IActor
     {
-        PlayerInfo GetPlayerInfo();
+        void Initialize(IActor actor);
+        void SetMoveCommand(Vector2 direction);
     }
     /// <summary>
     /// 玩家属性结构体
