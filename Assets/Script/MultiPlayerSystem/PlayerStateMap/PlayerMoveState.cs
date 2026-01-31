@@ -2,12 +2,10 @@ using UnityEngine;
 
 namespace GGJ2026
 {
-    public class PlayerMoveState : PlayerState
+    public class PlayerMoveState : PlayerGroundState
     {
-        public PlayerMoveState(PlayerInstance owner, string animaName)
+        public PlayerMoveState(PlayerInstance owner, string animaName) : base(owner, animaName)
         {
-            this.owner = owner;
-            this.animaName = animaName;
         }
 
         public override void Enter()
@@ -17,7 +15,9 @@ namespace GGJ2026
 
         public override void Update()
         {
-            owner.rb.velocity = Vector2.right * owner.moveValue;
+            // owner.rb.velocity = Vector2.right * owner.moveValue;
+            owner.SetVelocity(owner.stateInfo.moveSpeed * owner.moveValue.x,owner.rb.velocity.y);
+            base.Update();
         }
 
         public override void Exit()

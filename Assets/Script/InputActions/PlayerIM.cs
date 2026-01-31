@@ -37,6 +37,24 @@ namespace GGJ2026
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Jump"",
+                    ""type"": ""Button"",
+                    ""id"": ""1c6aa05c-fd51-4be2-838f-c52a8a1f978b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Dash"",
+                    ""type"": ""Button"",
+                    ""id"": ""d04e3b96-2f7f-4d56-b5e4-41d194f8ddbd"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -94,6 +112,28 @@ namespace GGJ2026
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a5900fdc-24e9-418d-a859-953b5db2cb3f"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e09b14b2-e33e-4400-b550-ab5ee1268bdb"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -109,6 +149,24 @@ namespace GGJ2026
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Jump"",
+                    ""type"": ""Button"",
+                    ""id"": ""31bd28c8-3dc7-4686-bf29-796134634eed"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Dash"",
+                    ""type"": ""Button"",
+                    ""id"": ""cfad18e2-324e-490b-9b2a-4edf11dc50c1"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -166,6 +224,28 @@ namespace GGJ2026
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f8e79187-dcc9-47b6-9d61-8f3ba65460f5"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e2116530-494e-45ab-992f-4fcc92219c86"",
+                    ""path"": ""<Keyboard>/k"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -175,9 +255,13 @@ namespace GGJ2026
             // P1
             m_P1 = asset.FindActionMap("P1", throwIfNotFound: true);
             m_P1_Move = m_P1.FindAction("Move", throwIfNotFound: true);
+            m_P1_Jump = m_P1.FindAction("Jump", throwIfNotFound: true);
+            m_P1_Dash = m_P1.FindAction("Dash", throwIfNotFound: true);
             // P2
             m_P2 = asset.FindActionMap("P2", throwIfNotFound: true);
             m_P2_Move = m_P2.FindAction("Move", throwIfNotFound: true);
+            m_P2_Jump = m_P2.FindAction("Jump", throwIfNotFound: true);
+            m_P2_Dash = m_P2.FindAction("Dash", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -240,11 +324,15 @@ namespace GGJ2026
         private readonly InputActionMap m_P1;
         private List<IP1Actions> m_P1ActionsCallbackInterfaces = new List<IP1Actions>();
         private readonly InputAction m_P1_Move;
+        private readonly InputAction m_P1_Jump;
+        private readonly InputAction m_P1_Dash;
         public struct P1Actions
         {
             private @PlayerIM m_Wrapper;
             public P1Actions(@PlayerIM wrapper) { m_Wrapper = wrapper; }
             public InputAction @Move => m_Wrapper.m_P1_Move;
+            public InputAction @Jump => m_Wrapper.m_P1_Jump;
+            public InputAction @Dash => m_Wrapper.m_P1_Dash;
             public InputActionMap Get() { return m_Wrapper.m_P1; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -257,6 +345,12 @@ namespace GGJ2026
                 @Move.started += instance.OnMove;
                 @Move.performed += instance.OnMove;
                 @Move.canceled += instance.OnMove;
+                @Jump.started += instance.OnJump;
+                @Jump.performed += instance.OnJump;
+                @Jump.canceled += instance.OnJump;
+                @Dash.started += instance.OnDash;
+                @Dash.performed += instance.OnDash;
+                @Dash.canceled += instance.OnDash;
             }
 
             private void UnregisterCallbacks(IP1Actions instance)
@@ -264,6 +358,12 @@ namespace GGJ2026
                 @Move.started -= instance.OnMove;
                 @Move.performed -= instance.OnMove;
                 @Move.canceled -= instance.OnMove;
+                @Jump.started -= instance.OnJump;
+                @Jump.performed -= instance.OnJump;
+                @Jump.canceled -= instance.OnJump;
+                @Dash.started -= instance.OnDash;
+                @Dash.performed -= instance.OnDash;
+                @Dash.canceled -= instance.OnDash;
             }
 
             public void RemoveCallbacks(IP1Actions instance)
@@ -286,11 +386,15 @@ namespace GGJ2026
         private readonly InputActionMap m_P2;
         private List<IP2Actions> m_P2ActionsCallbackInterfaces = new List<IP2Actions>();
         private readonly InputAction m_P2_Move;
+        private readonly InputAction m_P2_Jump;
+        private readonly InputAction m_P2_Dash;
         public struct P2Actions
         {
             private @PlayerIM m_Wrapper;
             public P2Actions(@PlayerIM wrapper) { m_Wrapper = wrapper; }
             public InputAction @Move => m_Wrapper.m_P2_Move;
+            public InputAction @Jump => m_Wrapper.m_P2_Jump;
+            public InputAction @Dash => m_Wrapper.m_P2_Dash;
             public InputActionMap Get() { return m_Wrapper.m_P2; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -303,6 +407,12 @@ namespace GGJ2026
                 @Move.started += instance.OnMove;
                 @Move.performed += instance.OnMove;
                 @Move.canceled += instance.OnMove;
+                @Jump.started += instance.OnJump;
+                @Jump.performed += instance.OnJump;
+                @Jump.canceled += instance.OnJump;
+                @Dash.started += instance.OnDash;
+                @Dash.performed += instance.OnDash;
+                @Dash.canceled += instance.OnDash;
             }
 
             private void UnregisterCallbacks(IP2Actions instance)
@@ -310,6 +420,12 @@ namespace GGJ2026
                 @Move.started -= instance.OnMove;
                 @Move.performed -= instance.OnMove;
                 @Move.canceled -= instance.OnMove;
+                @Jump.started -= instance.OnJump;
+                @Jump.performed -= instance.OnJump;
+                @Jump.canceled -= instance.OnJump;
+                @Dash.started -= instance.OnDash;
+                @Dash.performed -= instance.OnDash;
+                @Dash.canceled -= instance.OnDash;
             }
 
             public void RemoveCallbacks(IP2Actions instance)
@@ -330,10 +446,14 @@ namespace GGJ2026
         public interface IP1Actions
         {
             void OnMove(InputAction.CallbackContext context);
+            void OnJump(InputAction.CallbackContext context);
+            void OnDash(InputAction.CallbackContext context);
         }
         public interface IP2Actions
         {
             void OnMove(InputAction.CallbackContext context);
+            void OnJump(InputAction.CallbackContext context);
+            void OnDash(InputAction.CallbackContext context);
         }
     }
 }

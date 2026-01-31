@@ -4,6 +4,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 namespace GGJ2026
 {
@@ -18,7 +19,19 @@ namespace GGJ2026
 
         // private PlayerIM input;
         private PlayerInput playerInput;
+        public PlayerIM playerIM;
         public Vector2 moveValue;
+        
+        // State Change
+        public PlayerStateInfo stateInfo;
+
+        public float lastDashTime;
+        
+        private bool isFacingRight;
+        [SerializeField] private LayerMask groundLayer; //墙和地面的Layer
+        public int FacingDirection { get; private set; } = 1;
+        public bool GroundDetected { get; private set; }
+        public bool WallDetected { get; private set; }
 
         private void Awake()
         {
@@ -32,13 +45,81 @@ namespace GGJ2026
             Debug.Log(name + "switch to custom action map");
             
             animaMgr = new AnimationManager(GetComponentInChildren<Animator>());
+            stateInfo = GetComponent<PlayerStateInfo>();
             stateMachine = new PlayerStateMachine(this);
+        }
+
+        private void Start()
+        {
+            isFacingRight = true;
+            lastDashTime = -stateInfo.dashColdDown;
         }
 
         private void Update()
         {
             stateMachine.Update();
             moveValue = playerInput.actions["Move"].ReadValue<Vector2>();
+            HandleCollisionDetection();
+        }
+
+        public void SetVelocity(float x, float y)
+        {
+            this.rb.velocity = new Vector2(x, y);
+            FlipHandler(x);
+        }
+
+        public void SetVelocity(Vector2 vector)
+        {
+            this.rb.velocity = vector;
+            FlipHandler(vector.x);
+        }
+        
+        private void FlipHandler(float xVelocity)
+        {
+            if ((xVelocity > 0 && !isFacingRight) || (xVelocity < 0 && isFacingRight))
+            {
+                Flip();
+            }
+        }
+
+        public void Flip()
+        {
+            transform.Rotate(0,180,0);
+            isFacingRight = !isFacingRight;
+            FacingDirection *= -1;
+        }
+        
+        private void HandleCollisionDetection()
+        {
+            GroundDetected = Physics2D.Raycast(transform.position, Vector2.down, stateInfo.groundCheckDistance, groundLayer);
+            WallDetected = Physics2D.Raycast(transform.position, Vector2.right * FacingDirection, stateInfo.wallCheckDistance, groundLayer);
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.DrawLine(transform.position, transform.position + new Vector3(0,-stateInfo.groundCheckDistance,0));
+            Gizmos.DrawLine(transform.position, transform.position + new Vector3(stateInfo.wallCheckDistance, 0) * FacingDirection);// (_isFacingRight ? 1 : -1)
+        }
+
+        public Vector2 GetVelocity()
+        {
+            return this.rb.velocity;
+        }
+
+        public bool PressJumpKey()
+        {
+            return playerInput.actions["Jump"].WasPressedThisFrame();
+            // playerIM.P1.Jump.WasPressedThisFrame()
+        }
+
+        public bool PressDashKey()
+        {
+            return playerInput.actions["Jump"].WasPressedThisFrame();
+        }
+
+        public bool PressSpecialKey(string keyName)
+        {
+            return playerInput.actions[keyName].WasPressedThisFrame();
         }
     }
 

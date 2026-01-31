@@ -12,7 +12,8 @@ namespace GGJ2026
         Move,
         Jump,
         Dash,
-        Slid,
+        Slide,
+        WallJump,
         Fall
     }
     
@@ -21,6 +22,7 @@ namespace GGJ2026
         public PlayerInstance owner;
         public Dictionary<PlayerStates, IPlayerState> states;
         public IPlayerState currentState;
+        public PlayerStates currentStateType;
 
         public PlayerStateMachine(PlayerInstance owner)
         {
@@ -33,8 +35,14 @@ namespace GGJ2026
         {
             states.Add(PlayerStates.Idle, new PlayerIdleState(this.owner, "Idle"));
             states.Add(PlayerStates.Move, new PlayerMoveState(this.owner, "Move"));
+            states.Add(PlayerStates.Jump, new PlayerJumpState(this.owner, "JumpFall"));
+            states.Add(PlayerStates.Dash, new PlayerDashState(this.owner, "Dash"));
+            states.Add(PlayerStates.Fall, new PlayerFallState(this.owner, "JumpFall"));
+            states.Add(PlayerStates.WallJump, new PlayerWallJumpState(this.owner, "JumpFall"));
+            states.Add(PlayerStates.Slide, new PlayerWallSlideState(this.owner, "Slide"));
             
             ChangeState(PlayerStates.Idle);
+            currentStateType = PlayerStates.Idle;
         }
 
         public void Update()
@@ -45,6 +53,7 @@ namespace GGJ2026
         public void ChangeState(PlayerStates newState)
         {
             currentState?.Exit();
+            currentStateType = newState;
             currentState = states[newState];
             currentState.Enter();
         }
