@@ -9,10 +9,6 @@ namespace GGJ2026
         public override void Update()
         {
             base.Update();
-            if (owner.GroundDetected)
-            {
-                owner.stateMachine.ChangeState(PlayerStates.Idle);
-            }
         }
     }
 }

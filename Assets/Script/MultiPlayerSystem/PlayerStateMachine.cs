@@ -14,7 +14,8 @@ namespace GGJ2026
         Dash,
         Slide,
         WallJump,
-        Fall
+        Fall,
+        GetHit
     }
     
     public class PlayerStateMachine

@@ -16,5 +16,10 @@ namespace GGJ2026
         [SerializeField, Tooltip("冲刺冷却时间")] public float dashColdDown;
         [SerializeField, Tooltip("蹬墙跳方向")]public Vector2 wallJumpDirection;
         [SerializeField, Tooltip("能否二段跳")]public bool canJumpInAir;
+        [SerializeField, Tooltip("击飞力度")] public Vector2 hitDirection;
+        [SerializeField, Tooltip("可重复受击")] public bool multiGetHit;
+        [Tooltip("能否攻击")] public bool canAttack;
+        [Tooltip("受击方向")] public int getHitDirection;
+        [Tooltip("能否受击")] public bool canGetHit;
     }
 }
