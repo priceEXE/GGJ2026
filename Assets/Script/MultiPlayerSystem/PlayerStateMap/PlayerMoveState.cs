@@ -15,8 +15,8 @@ namespace GGJ2026
 
         public override void Update()
         {
-            // owner.rb.velocity = Vector2.right * owner.moveValue;
-            owner.SetVelocity(owner.stateInfo.moveSpeed * owner.moveValue.x,owner.rb.velocity.y);
+            // 使用 PlayerConfig 的移动速度
+            owner.SetVelocity(PlayerConfig.MoveSpeed * owner.moveValue.x, owner.rb.velocity.y);
             base.Update();
         }
 

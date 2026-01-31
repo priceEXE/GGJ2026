@@ -11,6 +11,10 @@ namespace GGJ2026
         public override void Enter()
         {
             base.Enter();
+            
+            // 落地时恢复二段跳权限
+            owner.hasDoubleJump = true;
+            
             owner.stateInfo.canJumpInAir = true;
             owner.stateInfo.canSlide = true;
         }
@@ -23,7 +27,7 @@ namespace GGJ2026
                 owner.stateMachine.ChangeState(PlayerStates.Fall);
             }
 
-            if (owner.PressSpecialKey("Jump"))
+            if (owner.PressJumpKey())
             {
                 owner.stateMachine.ChangeState(PlayerStates.Jump);
             }

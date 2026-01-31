@@ -15,6 +15,10 @@ namespace GGJ2026
         public override void Enter()
         {
             base.Enter();
+            
+            // 粘墙时失去二段跳权限
+            owner.hasDoubleJump = false;
+            
             StateTimer = owner.stateInfo.slideDuration;
         }
 
@@ -40,11 +44,25 @@ namespace GGJ2026
                 owner.stateMachine.ChangeState(PlayerStates.Fall);
             }
 
+            // 如果玩家松开朝向墙壁的按键，立即脱离墙壁
+            bool pressingTowardWall = owner.moveValue.x * owner.FacingDirection > 0;
+            if (!pressingTowardWall)
+            {
+                owner.stateMachine.ChangeState(PlayerStates.Fall);
+            }
+
             if (owner.GroundDetected)
             {
                 owner.stateMachine.ChangeState(PlayerStates.Idle);
                 owner.Flip();
             }
+        }
+
+        public override void Exit()
+        {
+            base.Exit();
+            // 记录离开墙壁的时间（用于墙跳缓冲）
+            owner.lastWallSlideTime = Time.time;
         }
 
         private void HandleSlide()

@@ -24,9 +24,21 @@ namespace GGJ2026
         public Vector2 moveValue;
         
         // State Change
-        public PlayerStateInfo stateInfo;
+        public PlayerStateInfo stateInfo; // TODO: 将被 PlayerConfig 替代
 
+        // 时间记录
         public float lastDashTime;
+        public float lastJumpTime; // 记录最后一次跳跃的时间
+        public float lastWallJumpTime; // 记录最后一次墙跳的时间
+        public float lastWallSlideTime; // 记录最后一次离开墙壁的时间
+        public int wallJumpDirection; // 墙跳的方向（1 或 -1）
+        
+        // 二段跳
+        public bool hasDoubleJump = true; // 是否拥有二段跳权限
+        
+        // 冲刺
+        public float dashStartTime; // 冲刺开始时间
+        public Vector2 dashDirection; // 冲刺方向
         
         private bool isFacingRight;
         [SerializeField] private LayerMask groundLayer; //墙和地面的Layer
@@ -49,17 +61,45 @@ namespace GGJ2026
             
             animaMgr = new AnimationManager(GetComponentInChildren<Animator>());
             stateInfo = GetComponent<PlayerStateInfo>();
-            stateMachine = new PlayerStateMachine(this);
+            
+            // 检查必需组件
+            if (stateInfo == null)
+            {
+                Debug.LogError($"[{name}] CRITICAL: PlayerStateInfo component is missing! Please attach it to the GameObject. StateMachine will not be initialized.");
+                return; // 不初始化状态机，避免崩溃
+            }
+            
+            // 尝试初始化状态机，捕获可能的异常
+            try
+            {
+                stateMachine = new PlayerStateMachine(this);
+                Debug.Log($"[{name}] StateMachine initialized successfully!");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[{name}] CRITICAL: Failed to initialize StateMachine! Exception: {e.GetType().Name}\nMessage: {e.Message}\nStackTrace:\n{e.StackTrace}");
+                stateMachine = null;
+            }
         }
 
         private void Start()
         {
             isFacingRight = true;
-            lastDashTime = -stateInfo.dashColdDown;
+            hasDoubleJump = true; // 初始拥有二段跳
+            
+            // 应用 PlayerConfig 的物理参数
+            rb.gravityScale = PlayerConfig.GravityScale;
+            // Unity 不直接支持 maxSpeed，需要在 FixedUpdate 中手动限制
         }
 
         private void Update()
         {
+            if (stateMachine == null)
+            {
+                Debug.LogError($"[{name}] stateMachine is null! Check if PlayerStateInfo component is attached.");
+                return;
+            }
+            
             stateMachine.Update();
             moveValue = playerInput.actions["Move"].ReadValue<Vector2>();
             HandleCollisionDetection();
@@ -117,7 +157,7 @@ namespace GGJ2026
 
         public bool PressDashKey()
         {
-            return playerInput.actions["Jump"].WasPressedThisFrame();
+            return playerInput.actions["Dash"].WasPressedThisFrame();
         }
 
         public bool PressSpecialKey(string keyName)

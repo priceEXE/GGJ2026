@@ -18,7 +18,7 @@ namespace GGJ2026
         {
             // throw new System.NotImplementedException();
             owner.animaMgr.SetFloat("yVelocity", owner.rb.velocity.y);
-            if (owner.PressSpecialKey("Dash") && CanDash())
+            if (owner.PressDashKey() && CanDash())
             {
                 owner.stateMachine.ChangeState(PlayerStates.Dash);
             }
