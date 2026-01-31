@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8650994366878941044}
   - component: {fileID: 8555918913803899484}
   - component: {fileID: 5538610661048421693}
+  - component: {fileID: 6536183168430591925}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -207,6 +208,23 @@ MonoBehaviour:
   dashColdDown: 2
   wallJumpDirection: {x: 5, y: 5}
   canJumpInAir: 1
+--- !u!114 &6536183168430591925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1605826819183533156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5710ac2557fa40f4b897f84e21333f07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_moveDirection: {x: 0, y: 0}
+  m_fireDirection: {x: 0, y: 0}
+  m_isFiring: 0
+  m_enableRedirectTransform: 0
+  m_redirectTarget: {fileID: 0}
 --- !u!1 &4252243761215366437
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Gameplay;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -14,7 +15,7 @@ namespace GGJ2026
         public PlayerStateMachine stateMachine;
         public AnimationManager animaMgr;
         public Rigidbody2D rb;
-
+        public IActor actor;
         private Collider2D col;
 
         // private PlayerIM input;
@@ -32,6 +33,7 @@ namespace GGJ2026
         public int FacingDirection { get; private set; } = 1;
         public bool GroundDetected { get; private set; }
         public bool WallDetected { get; private set; }
+        public Vector2 fireDirection => Vector2.right * FacingDirection;
 
         private void Awake()
         {
@@ -39,6 +41,7 @@ namespace GGJ2026
             
             rb = GetComponent<Rigidbody2D>();
             col = GetComponent<Collider2D>();
+            actor = GetComponent<IActor>();
             playerInput = GetComponent<PlayerInput>();
             
             playerInput.SwitchCurrentActionMap(name);
