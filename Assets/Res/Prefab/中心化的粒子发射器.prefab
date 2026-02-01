@@ -45,5 +45,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dustRingPrefab: {fileID: 7224783262876437542, guid: a9b3e451b75ac924eaade2352eb5e8e6, type: 3}
-  dustJetPrefab: {fileID: 0}
-  creamJetPrefab: {fileID: 0}
+  dustJetPrefab: {fileID: 5588712252170663210, guid: 1006dfe008b2c634a9ee13bd8dd6d4c9, type: 3}
+  creamJetPrefab: {fileID: 2808103367808801847, guid: 68750d017ef38ea4ab568c510bae87b5, type: 3}

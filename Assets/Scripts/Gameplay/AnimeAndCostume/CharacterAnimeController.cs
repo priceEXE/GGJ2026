@@ -17,6 +17,19 @@ namespace Gameplay.AnimeAndCostume
         Dictionary<SpineSlots, bool> GetAllSlotVisibility();
         void SetAllSlotVisibility(Dictionary<SpineSlots, bool> visibility);
         void PlayAnimation(SpineAnimations anim, bool loop = true);
+        /// <summary>
+        /// [闪烁效果] 触发受击红闪或黑白闪效果
+        /// <para>通常用于反馈角色受到伤害(黑白闪)。</para>
+        /// <example>
+        /// 范例：
+        /// <code>
+        /// // 触发 3 次快速闪烁，每次间隔 0.1 秒
+        /// controller.Flash(0.1f, 3);
+        /// </code>
+        /// </example>
+        /// </summary>
+        /// <param name="interval">每次闪烁的时间间隔（单位：秒）</param>
+        /// <param name="count">闪烁的总次数</param>
         void Flash(float interval = 0.1f, int count = 3);
     }
 

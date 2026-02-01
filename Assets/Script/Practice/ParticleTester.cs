@@ -6,24 +6,24 @@ namespace Practice
     {
         [Header("Dust Ring Parameters")]
         public Vector2 ringNormal = Vector2.up;
-        public float ringSize = 1.0f;
-        public int ringCount = 20;
-        public float ringForce = 5.0f;
+        public float ringSize = 0.5f;
+        public int ringCount = 5;
+        public float ringForce = 3.0f;
 
         [Header("Dust Jet Parameters")]
         public Vector2 jetDirection = Vector2.right;
-        public float jetSpread = 30f;
-        public float jetSize = 1.0f;
-        public int jetCount = 25;
-        public float jetForce = 8.0f;
+        public float jetSpread = 15f;
+        public float jetSize = 0.5f;
+        public int jetCount = 15;
+        public float jetForce = 20.0f;
 
         [Header("Cream Jet Parameters")]
         public Vector2 creamDirection = Vector2.right;
         public Color creamColor = new Color(1.0f, 0.95f, 0.85f); // #FFF2D9
-        public float creamSpread = 15f;
-        public float creamSize = 1.0f;
-        public int creamCount = 30;
-        public float creamForce = 10.0f;
+        public float creamSpread = 10f;
+        public float creamSize = 0.2f;
+        public int creamCount = 10;
+        public float creamForce = 30.0f;
 
         [Header("Test Controls")]
         public KeyCode ringKey = KeyCode.T;
@@ -41,21 +41,21 @@ namespace Practice
         public void TriggerDustRing()
         {
             if (ParticleManager.Instance != null)
-                ParticleManager.Instance.PlayDustRing(transform.position, ringNormal, ringSize, ringCount, ringForce);
+                ParticleManager.Instance.SpawnDustRing(transform.position, ringNormal, ringCount);
         }
 
         [ContextMenu("Trigger Dust Jet")]
         public void TriggerDustJet()
         {
             if (ParticleManager.Instance != null)
-                ParticleManager.Instance.PlayDustJet(transform.position, jetDirection, jetSpread, jetSize, jetCount, jetForce);
+                ParticleManager.Instance.SpawnDustJet(transform.position, jetDirection);
         }
 
         [ContextMenu("Trigger Cream Jet")]
         public void TriggerCreamJet()
         {
             if (ParticleManager.Instance != null)
-                ParticleManager.Instance.PlayCreamJet(transform.position, creamDirection, creamColor, creamSpread, creamSize, creamCount, creamForce);
+                ParticleManager.Instance.SpawnCreamJet(transform.position, creamDirection, creamForce);
         }
 
         private void OnDrawGizmosSelected()
