@@ -207,6 +207,68 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &852633450
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 852633452}
+  - component: {fileID: 852633451}
+  m_Layer: 0
+  m_Name: GameObject (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &852633451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 852633450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec535d0d86cbfce4f9007e7f00f9e541, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ringNormal: {x: 0, y: 1}
+  ringSize: 1
+  ringCount: 20
+  ringForce: 5
+  jetDirection: {x: 1, y: 0}
+  jetSpread: 30
+  jetSize: 1
+  jetCount: 25
+  jetForce: 8
+  creamDirection: {x: 1, y: 0}
+  creamColor: {r: 1, g: 0.95, b: 0.85, a: 1}
+  creamSpread: 15
+  creamSize: 1
+  creamCount: 30
+  creamForce: 10
+  ringKey: 116
+  jetKey: 106
+  creamKey: 99
+--- !u!4 &852633452
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 852633450}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.2804737, y: 2.5938137, z: -0.14331235}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &969196686
 GameObject:
   m_ObjectHideFlags: 0
@@ -1496,3 +1558,4 @@ SceneRoots:
   - {fileID: 793847268}
   - {fileID: 969196687}
   - {fileID: 1707137919}
+  - {fileID: 852633452}
