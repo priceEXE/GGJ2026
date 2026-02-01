@@ -6,14 +6,15 @@ namespace GGJ2026
         /// <summary>
         /// 玩家复活点X轴最小值
         /// </summary>
-        public readonly float minPlayerRebornX;
+        public const float minPlayerRebornX = -10.0f;
         /// <summary>
         /// 玩家复活点X轴最大值
         /// </summary>
-        public readonly float maxPlayerRebornX;
+        public const float maxPlayerRebornX = 10.0f;
+
         /// <summary>
         /// 玩家复活Y轴值
         /// </summary>
-        public readonly float PlayerRebornY;
+        public const float PlayerRebornY = 20.0f;
     }
 }

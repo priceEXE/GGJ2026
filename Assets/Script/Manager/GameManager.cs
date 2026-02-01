@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MemoFramework.Extension;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Random = System.Random;
@@ -14,6 +15,7 @@ namespace GGJ2026
         [SerializeField] private List<GameObject> itemCreatePoint;
         [SerializeField] private float itemCreateColdTime;
         private Dictionary<GameObject, bool> itemCreateDict;
+        [SerializeField] private GameObject playerPrefab;
         private Random random;
         public static GameManager instance
         {
@@ -36,7 +38,23 @@ namespace GGJ2026
             itemCreateTimer = 0;
             itemCreateDict = new();
             random = new Random((int)DateTime.Now.Ticks);
+            StartGame();
         }
+
+        public void StartGame()
+        {
+            PlayerInstance player = Instantiate(playerPrefab, new Vector3(-5, 0 , 0), Quaternion.identity).GetComponent<PlayerInstance>();
+            player.Init("P1");
+            var playerSR = player.gameObject.GetComponent<SpriteRenderer>();
+            playerSR.color = Color.blue;
+            players.Add(player.Name, player);
+            player = Instantiate(playerPrefab, new Vector3(5, 0 , 0), Quaternion.identity).GetComponent<PlayerInstance>();
+            player.Init("P2");
+            playerSR = player.gameObject.GetComponent<SpriteRenderer>();
+            playerSR.color = Color.red;
+            players.Add(player.Name, player);
+        }
+        
 
         private void Update()
         {
@@ -54,6 +72,12 @@ namespace GGJ2026
                 itemCreateDict[validPoint[randomValue]] = false;
             }
         }
+
+        public void GameEnd()
+        {
+            MF.Event.Fire(this, OnRequireEnterEnd.Create());
+        }
+        
     }
     
     

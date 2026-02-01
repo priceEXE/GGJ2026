@@ -6,8 +6,10 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-
 using Gameplay.AnimeAndCostume;
+using MemoFramework.Extension;
+using UnityEditor.Experimental.GraphView;
+using Random = UnityEngine.Random;
 
 namespace GGJ2026
 {
@@ -20,6 +22,7 @@ namespace GGJ2026
         public Rigidbody2D rb;
         public IActor actor;
         private Collider2D col;
+        private int currentHp;
 
         // private PlayerIM input;
         private PlayerInput playerInput;
@@ -39,7 +42,8 @@ namespace GGJ2026
         
         // 二段跳
         public bool hasDoubleJump = true; // 是否拥有二段跳权限
-        
+
+        public bool canSlide;
         // 冲刺
         public float dashStartTime; // 冲刺开始时间
         public Vector2 dashDirection; // 冲刺方向
@@ -60,8 +64,6 @@ namespace GGJ2026
             actor = GetComponent<IActor>();
             playerInput = GetComponent<PlayerInput>();
             
-            playerInput.SwitchCurrentActionMap(name);
-            Debug.Log(name + "switch to custom action map");
             
             animaMgr = new AnimationManager(GetComponentInChildren<Animator>());
             animeController = GetComponentInChildren<CharacterAnimeController>();
@@ -88,11 +90,18 @@ namespace GGJ2026
             }
         }
 
+        public void Init(string name)
+        {
+            this.Name = name;
+            playerInput.SwitchCurrentActionMap(Name);
+            Debug.Log(name + "switch to custom action map");
+        }
+
         private void Start()
         {
             isFacingRight = true;
             hasDoubleJump = true; // 初始拥有二段跳
-            
+            currentHp = stateInfo.originalHP;
             // 应用 PlayerConfig 的物理参数
             rb.gravityScale = PlayerConfig.GravityScale;
             // Unity 不直接支持 maxSpeed，需要在 FixedUpdate 中手动限制
@@ -104,6 +113,23 @@ namespace GGJ2026
             {
                 Debug.LogError($"[{name}] stateMachine is null! Check if PlayerStateInfo component is attached.");
                 return;
+            }
+
+            if (PressSpecialKey("Attack"))
+            {
+                var actor = gameObject.GetComponent<IActor>();
+                if (actor is global::Player player)
+                {
+                    player.m_isFiring = true;
+                }
+            }
+            else
+            {
+                var actor = gameObject.GetComponent<IActor>();
+                if (actor is global::Player player)
+                {
+                    player.m_isFiring = false;
+                }
             }
             
             stateMachine.Update();
@@ -129,6 +155,18 @@ namespace GGJ2026
             {
                 Flip();
             }
+        }
+
+        public void PlayerDie()
+        {
+            this.currentHp -= 1;
+            if (currentHp <= 0)
+            {
+                MF.Blackboard.SetString("Loser", Name);
+                GameManager.instance.GameEnd();
+                return;
+            }
+            this.transform.position = new Vector2(Random.Range(GameManagerContants.minPlayerRebornX, GameManagerContants.maxPlayerRebornX), GameManagerContants.PlayerRebornY);
         }
 
         public void Flip()

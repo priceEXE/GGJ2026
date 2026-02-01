@@ -16,6 +16,7 @@ namespace GGJ2026
             
             // 落地时恢复二段跳权限
             owner.hasDoubleJump = true;
+            owner.canSlide = true;
             
             owner.stateInfo.canJumpInAir = true;
             owner.stateInfo.canSlide = true;

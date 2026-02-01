@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace GGJ2026
 {
+    [RequireComponent(typeof(Collider2D))]
     public class KillBox : MonoBehaviour
     {
         private Collider2D col;
