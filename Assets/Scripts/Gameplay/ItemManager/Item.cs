@@ -41,6 +41,8 @@ namespace Gameplay
         public bool m_isSpecialItem;
         //物品持有时施加的标记
         public string m_tag;
+        //物品的命中施加名称
+        public string m_AddItemName;
 
     };
 

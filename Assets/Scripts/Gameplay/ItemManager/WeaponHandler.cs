@@ -16,6 +16,7 @@ namespace Gameplay
                     gameObject.transform.SetParent(player.m_redirectTarget);
                 }
                 gameObject.transform.position = (actor as MonoBehaviour).transform.position;
+                gameObject.GetComponent<IActor>().Initialize(actor);
                 gameObject.GetComponent<IActor>().SetMoveCommand(player.m_fireDirection);
             }
         }

@@ -1,8 +1,17 @@
+using System.Collections.Generic;
 using Gameplay;
 using UnityEngine;
 
 public class ItemConfig
 {
+    public static readonly Dictionary<string, Item> m_ItemLists = new Dictionary<string, Item>(){
+        { "DefaultItem", DefaultItem },
+        { "NormalCake", NormalCake },
+        { "Icecream", Icecream },
+        { "CreamRifle", CreamRifle },
+        { "SpecialMaterial", SpecialMaterial },
+    };
+
     //空物体
     public static readonly Item DefaultItem = new Item
     {
@@ -48,6 +57,7 @@ public class ItemConfig
         m_onItemEnter = (actor, item) =>
         {
             ItemHandler.IncreasePlayerInfo(actor, item);
+            ItemHandler.IncreaseWeaponInfo(actor, item);
         },
         m_onItemQuit = (actor, item) =>
         {
@@ -122,5 +132,48 @@ public class ItemConfig
         m_enableAmmoCount = false,//武器类物品启用弹药数量计算方式
         m_isSpecialItem = true,
         m_tag = "CanDoubleJump",//赋予玩家二段跳能力的标记
+    };
+
+        // 樱桃 - 命中瞬间触发AOE冲击波
+    public static readonly Item Cherry = new Item
+    {
+        m_itemName = "Cherry",
+        m_itemIconPath = "Assets/ArtResource/Cherry.png",
+        m_itemIgnoreDuration = false,
+        m_itemDuration = 15f,
+        m_onItemEnter = (actor, item) =>
+        {
+            ItemHandler.ReplaceSpecialMaterial(actor, item);
+            ItemHandler.AddTagToActor(actor, item);
+        },
+        m_onItemQuit = (actor, item) =>
+        {
+            ItemHandler.RemoveTagFromActor(actor, item);
+        },
+        m_enableAmmoCount = false,
+        m_isSpecialItem = true,
+        m_tag = "Cherrybuff",//樱桃炸弹：命中触发AOE击飞
+    };
+
+
+    // 苏打水/泡芙 - 命中目标附加充气debuff
+    public static readonly Item Soda = new Item
+    {
+        m_itemName = "Soda",
+        m_itemIconPath = "Assets/ArtResource/Soda.png",
+        m_itemIgnoreDuration = false,
+        m_itemDuration = 15f,
+        m_onItemEnter = (actor, item) =>
+        {
+            ItemHandler.ReplaceSpecialMaterial(actor, item);
+            ItemHandler.AddTagToActor(actor, item);
+        },
+        m_onItemQuit = (actor, item) =>
+        {
+            ItemHandler.RemoveTagFromActor(actor, item);
+        },
+        m_enableAmmoCount = false,
+        m_isSpecialItem = true,
+        m_tag = "Sodabuff",//充气效果：命中后降低目标重力+增加受击倍率
     };
 }

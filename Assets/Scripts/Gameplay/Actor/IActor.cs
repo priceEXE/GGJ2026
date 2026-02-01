@@ -18,7 +18,7 @@ namespace Gameplay
         //玩家跳跃力
         public float m_jumpForce;
         //玩家受击百分比
-        public int m_HitPrecentage;
+        public float m_HitPrecentage;
         //玩家地面粘性
         public float m_groundStickiness;
         /// <summary>

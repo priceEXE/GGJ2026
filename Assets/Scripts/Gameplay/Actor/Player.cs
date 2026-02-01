@@ -41,4 +41,44 @@ public class Player : MonoBehaviour, IActor
     {
         m_moveDirection = direction.normalized;
     }
+    void OnCollisionEnter2D(Collision2D collision2d)
+    {
+        //被子弹命中
+        if(collision2d.gameObject.CompareTag("Bullet"))
+        {
+            IActor actor = collision2d.gameObject.GetComponent<IActor>();
+            if(actor != null && actor is Bullet bullet)
+            {
+                IActor actor1 = bullet.m_owner;
+                if(actor1 != null  && actor1 is Player player)
+                {
+                    if(player == this)
+                    {
+                        return;
+                    }
+                    PlayerInfo attackerInfo = player.GetPlayerInfo();
+                    WeaponInfo weaponInfo = player.m_weaponColder.m_weaponInfo;
+                    Debug.Log("在这里操作受击玩家属性变化");
+                    //例如最简单的增加受击玩家的受击百分比
+                    m_playerInfo.m_HitPrecentage += weaponInfo.m_HitPrecentageIncrease;
+                    //为玩家添加生效物品(触发一个buff)
+                    if(bullet.m_AddItemName != string.Empty)
+                    {
+                        m_itemContainer.AddItem(this, ItemConfig.m_ItemLists[bullet.m_AddItemName]);
+                    }
+                    //为玩家移除生效物品（强制移除一个buff）
+                    if(bullet.m_RemoveItemName != string.Empty)
+                    {
+                        m_itemContainer.RemoveItem(this, ItemConfig.m_ItemLists[bullet.m_RemoveItemName]);
+                    }
+                }
+            }
+        }
+        //捡起物品
+        if(collision2d.gameObject.CompareTag("Item"))
+        {
+            string itemName = collision2d.gameObject.name;
+            m_itemContainer.AddItem(this, ItemConfig.m_ItemLists[itemName]);
+        }
+    }
 }

@@ -30,7 +30,7 @@ namespace GGJ2026
             {
                 Debug.LogWarning("Slide Time out");
                 // owner.stateInfo.canSlide = false;
-                owner.canSlide = false;
+                //owner.canSlide = false;
                 owner.stateMachine.ChangeState(PlayerStates.Fall);
             }
 
