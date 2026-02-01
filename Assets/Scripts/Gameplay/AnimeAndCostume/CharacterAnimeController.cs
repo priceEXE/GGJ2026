@@ -11,39 +11,12 @@ namespace Gameplay.AnimeAndCostume
     /// </summary>
     public interface ICharacterAnimeController
     {
-        /// <summary>
-        /// 显示指定插槽
-        /// </summary>
         void ShowSlot(SpineSlots slot);
-
-        /// <summary>
-        /// 隐藏指定插槽
-        /// </summary>
         void HideSlot(SpineSlots slot);
-
-        /// <summary>
-        /// 切换插槽可见性
-        /// </summary>
         void ToggleSlot(SpineSlots slot);
-
-        /// <summary>
-        /// 获取所有插槽的可见性状态（用于缓存）
-        /// </summary>
         Dictionary<SpineSlots, bool> GetAllSlotVisibility();
-
-        /// <summary>
-        /// 批量设置插槽可见性（用于还原状态）
-        /// </summary>
         void SetAllSlotVisibility(Dictionary<SpineSlots, bool> visibility);
-
-        /// <summary>
-        /// 播放骨骼动画
-        /// </summary>
         void PlayAnimation(SpineAnimations anim, bool loop = true);
-
-        /// <summary>
-        /// 闪烁效果（代理Binarizer）
-        /// </summary>
         void Flash(float interval = 0.1f, int count = 3);
     }
 
@@ -60,8 +33,43 @@ namespace Gameplay.AnimeAndCostume
         [Header("组件")]
         [SerializeField] private Binarizer binarizer;
 
-        // 缓存原始附件名称，用于恢复
-        private Dictionary<SpineSlots, string> originalAttachments = new Dictionary<SpineSlots, string>();
+        [Header("非Spine槽位 (使用 SpriteRenderer)")]
+        [Tooltip("Cannon 槽位的 SpriteRenderer")]
+        [SerializeField] private SpriteRenderer cannonRenderer;
+        
+        [Tooltip("Gun 槽位的 SpriteRenderer")]
+        [SerializeField] private SpriteRenderer gunRenderer;
+
+        // 目标可见性状态 (SpineSlots -> ShouldBeVisible)
+        private Dictionary<SpineSlots, bool> _targetVisibility = new Dictionary<SpineSlots, bool>();
+        
+        // 延迟缓存的附件名称（仅在首次隐藏时记录）
+        private Dictionary<SpineSlots, string> _cachedAttachments = new Dictionary<SpineSlots, string>();
+        
+        // 非Spine槽位列表（使用SpriteRenderer）
+        private static readonly HashSet<SpineSlots> NonSpineSlots = new HashSet<SpineSlots>
+        {
+            SpineSlots.Cannon,
+            SpineSlots.Gun
+        };
+
+        // 永远打开的插槽（忽略 Hide/Toggle 指令）
+        private static readonly HashSet<SpineSlots> PermanentSlots = new HashSet<SpineSlots>
+        {
+            SpineSlots.body,
+            SpineSlots.lefthand,
+            SpineSlots.righthand,
+            SpineSlots.leftleg,
+            SpineSlots.rightleg,
+            SpineSlots.sound
+        };
+
+        // 默认打开但可切换的插槽
+        private static readonly HashSet<SpineSlots> DefaultOpenSwitchableSlots = new HashSet<SpineSlots>
+        {
+            SpineSlots.face1,
+            SpineSlots.cake
+        };
 
         private void Awake()
         {
@@ -69,70 +77,136 @@ namespace Gameplay.AnimeAndCostume
             {
                 skeletonAnimation = GetComponent<SkeletonAnimation>();
             }
+        }
 
-            CacheOriginalAttachments();
+        private void Start()
+        {
+            InitializeSlotVisibility();
+        }
+
+        private void LateUpdate()
+        {
+            // 每帧强制应用可见性状态，防止动画覆盖
+            ApplyVisibilityState();
         }
 
         /// <summary>
-        /// 缓存所有插槽的原始附件名称
+        /// 初始化插槽可见性
         /// </summary>
-        private void CacheOriginalAttachments()
+        private void InitializeSlotVisibility()
         {
-            if (skeletonAnimation == null || skeletonAnimation.Skeleton == null)
-                return;
+            _targetVisibility.Clear();
 
-            var skeleton = skeletonAnimation.Skeleton;
             foreach (SpineSlots slotEnum in System.Enum.GetValues(typeof(SpineSlots)))
             {
                 if (slotEnum == SpineSlots.None) continue;
 
-                string slotName = slotEnum.ToString();
-                var slot = skeleton.FindSlot(slotName);
-                if (slot != null && slot.Attachment != null)
+                // 永久槽位和默认打开槽位设为可见，其他设为不可见
+                _targetVisibility[slotEnum] = 
+                    PermanentSlots.Contains(slotEnum) || 
+                    DefaultOpenSwitchableSlots.Contains(slotEnum);
+            }
+            
+            // 立即应用一次
+            ApplyVisibilityState();
+        }
+
+        /// <summary>
+        /// 应用可见性状态到所有槽位
+        /// </summary>
+        private void ApplyVisibilityState()
+        {
+            foreach (var kvp in _targetVisibility)
+            {
+                var slotEnum = kvp.Key;
+                bool shouldBeVisible = kvp.Value;
+                
+                // 特殊处理：非Spine槽位（使用SpriteRenderer）
+                if (NonSpineSlots.Contains(slotEnum))
                 {
-                    originalAttachments[slotEnum] = slot.Attachment.Name;
+                    ApplyNonSpineSlotVisibility(slotEnum, shouldBeVisible);
+                    continue;
+                }
+                
+                // 常规处理：Spine槽位
+                if (skeletonAnimation == null || skeletonAnimation.Skeleton == null) continue;
+                
+                string slotName = SpineNames.GetSlotName(slotEnum);
+                var slot = skeletonAnimation.Skeleton.FindSlot(slotName);
+
+                if (slot == null) continue;
+
+                if (shouldBeVisible)
+                {
+                    // 显示：设置透明度为1，如果需要则恢复附件
+                    slot.A = 1f;
+                    
+                    if (slot.Attachment == null && _cachedAttachments.TryGetValue(slotEnum, out string attachmentName))
+                    {
+                        var attachment = skeletonAnimation.Skeleton.GetAttachment(slotName, attachmentName);
+                        if (attachment != null)
+                        {
+                            slot.Attachment = attachment;
+                        }
+                    }
+                }
+                else
+                {
+                    // 隐藏：首次隐藏时缓存附件，然后设置透明度为0
+                    if (!_cachedAttachments.ContainsKey(slotEnum) && slot.Attachment != null)
+                    {
+                        _cachedAttachments[slotEnum] = slot.Attachment.Name;
+                        #if UNITY_EDITOR
+                        Debug.Log($"[CharacterAnimeController] 缓存附件: {slotName} -> {slot.Attachment.Name}");
+                        #endif
+                    }
+                    
+                    slot.A = 0f;
                 }
             }
         }
 
         /// <summary>
-        /// 显示指定插槽（恢复其附件）
+        /// 应用非Spine槽位的可见性（使用SpriteRenderer）
+        /// </summary>
+        private void ApplyNonSpineSlotVisibility(SpineSlots slot, bool visible)
+        {
+            SpriteRenderer renderer = slot switch
+            {
+                SpineSlots.Cannon => cannonRenderer,
+                SpineSlots.Gun => gunRenderer,
+                _ => null
+            };
+
+            if (renderer != null)
+            {
+                renderer.enabled = visible;
+            }
+        }
+
+        /// <summary>
+        /// 显示指定插槽
         /// </summary>
         public void ShowSlot(SpineSlots slot)
         {
             if (slot == SpineSlots.None || skeletonAnimation == null) return;
 
-            string slotName = slot.ToString();
-            var skeleton = skeletonAnimation.Skeleton;
-            var slotObj = skeleton.FindSlot(slotName);
-
-            if (slotObj != null)
-            {
-                slotObj.A = 1f;
-
-                // 尝试恢复原始附件
-                if (originalAttachments.ContainsKey(slot) && slotObj.Attachment == null)
-                {
-                    skeleton.SetAttachment(slotName, originalAttachments[slot]);
-                }
-            }
+            _targetVisibility[slot] = true;
+            ApplyVisibilityState();
         }
 
         /// <summary>
-        /// 隐藏指定插槽（使用透明度）
+        /// 隐藏指定插槽
         /// </summary>
         public void HideSlot(SpineSlots slot)
         {
-            if (slot == SpineSlots.None || skeletonAnimation == null) return;
+            if (slot == SpineSlots.None) return;
+            
+            // 永久槽位不允许隐藏
+            if (PermanentSlots.Contains(slot)) return;
 
-            string slotName = slot.ToString();
-            var skeleton = skeletonAnimation.Skeleton;
-            var slotObj = skeleton.FindSlot(slotName);
-
-            if (slotObj != null)
-            {
-                slotObj.A = 0f;
-            }
+            _targetVisibility[slot] = false;
+            ApplyVisibilityState();
         }
 
         /// <summary>
@@ -140,48 +214,29 @@ namespace Gameplay.AnimeAndCostume
         /// </summary>
         public void ToggleSlot(SpineSlots slot)
         {
-            if (slot == SpineSlots.None || skeletonAnimation == null) return;
+            if (slot == SpineSlots.None) return;
 
-            string slotName = slot.ToString();
-            var slotObj = skeletonAnimation.Skeleton.FindSlot(slotName);
+            // 永久槽位不允许切换
+            if (PermanentSlots.Contains(slot)) return;
 
-            if (slotObj != null)
+            if (_targetVisibility.ContainsKey(slot))
             {
-                slotObj.A = slotObj.A > 0.5f ? 0f : 1f;
+                _targetVisibility[slot] = !_targetVisibility[slot];
+                ApplyVisibilityState();
             }
         }
 
         /// <summary>
-        /// 获取所有插槽的可见性状态（用于缓存）
+        /// 获取所有插槽的可见性状态
         /// </summary>
         public Dictionary<SpineSlots, bool> GetAllSlotVisibility()
         {
-            var result = new Dictionary<SpineSlots, bool>();
-
-            if (skeletonAnimation == null || skeletonAnimation.Skeleton == null)
-                return result;
-
-            var skeleton = skeletonAnimation.Skeleton;
-
-            foreach (SpineSlots slotEnum in System.Enum.GetValues(typeof(SpineSlots)))
-            {
-                if (slotEnum == SpineSlots.None) continue;
-
-                string slotName = slotEnum.ToString();
-                var slot = skeleton.FindSlot(slotName);
-
-                if (slot != null)
-                {
-                    // 通过透明度判断是否可见
-                    result[slotEnum] = slot.A > 0.5f;
-                }
-            }
-
-            return result;
+            // 直接返回目标可见性状态的副本
+            return new Dictionary<SpineSlots, bool>(_targetVisibility);
         }
 
         /// <summary>
-        /// 批量设置插槽可见性（用于还原缓存的状态）
+        /// 批量设置插槽可见性
         /// </summary>
         public void SetAllSlotVisibility(Dictionary<SpineSlots, bool> visibility)
         {
@@ -213,9 +268,12 @@ namespace Gameplay.AnimeAndCostume
                 return;
             }
 
-            string animName = anim.ToString();
+            string animName = SpineNames.GetAnimationName(anim);
             skeletonAnimation.AnimationState.SetAnimation(0, animName, loop);
+            
+            #if UNITY_EDITOR
             Debug.Log($"[CharacterAnimeController] Playing: {animName} (loop={loop})");
+            #endif
         }
 
         /// <summary>
@@ -254,30 +312,6 @@ namespace Gameplay.AnimeAndCostume
                 {
                     HideSlot(slot);
                 }
-            }
-        }
-
-        [ContextMenu("测试: 缓存并还原插槽状态")]
-        private void TestCacheAndRestore()
-        {
-            // 获取当前状态
-            var cachedState = GetAllSlotVisibility();
-            Debug.Log($"已缓存 {cachedState.Count} 个插槽状态");
-
-            // 隐藏全部
-            TestHideAllSlots();
-
-            // 延迟 2 秒后还原
-            Invoke(nameof(RestoreCachedState), 2f);
-        }
-
-        private Dictionary<SpineSlots, bool> _cachedState;
-        private void RestoreCachedState()
-        {
-            if (_cachedState != null)
-            {
-                SetAllSlotVisibility(_cachedState);
-                Debug.Log("已还原插槽状态");
             }
         }
 

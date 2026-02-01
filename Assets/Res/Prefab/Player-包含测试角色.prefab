@@ -118,8 +118,6 @@ GameObject:
   - component: {fileID: 3684559201309241781}
   - component: {fileID: 864571295484825739}
   - component: {fileID: 1452327235445279301}
-  - component: {fileID: 8162675401803463596}
-  - component: {fileID: 1495493250775546511}
   m_Layer: 0
   m_Name: "\u89D2\u8272\u5F62\u8C61"
   m_TagString: Untagged
@@ -162,7 +160,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 17c74e40a98777d4b8b2fcf66abad18f, type: 2}
+  - {fileID: 2100000, guid: d4203daa9f7f66e4e87cb7d71ae0309d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -196,8 +194,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d247ba06193faa74d9335f5481b2b56c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skeletonDataAsset: {fileID: 11400000, guid: e63ee0190b2666941a7ba13cb3221f96, type: 2}
-  initialSkinName: 
+  skeletonDataAsset: {fileID: 11400000, guid: e8c417547c7c76d4da3b5f2fe005b9b9, type: 2}
+  initialSkinName: green
   fixPrefabOverrideViaMeshFilter: 2
   initialFlipX: 0
   initialFlipY: 0
@@ -224,7 +222,7 @@ MonoBehaviour:
   physicsMovementRelativeTo: {fileID: 0}
   updateTiming: 1
   unscaledTime: 0
-  _animationName: 
+  _animationName: jump
   loop: 0
   timeScale: 1
 --- !u!33 &1452327235445279301
@@ -235,33 +233,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4571773049069632846}
   m_Mesh: {fileID: 0}
---- !u!114 &8162675401803463596
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4571773049069632846}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe04c573e4023874688c0c567b949771, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mode: 0
---- !u!114 &1495493250775546511
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4571773049069632846}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20cf9df953bbb6e4b8a7ca456aca7617, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  skeletonAnimation: {fileID: 864571295484825739}
-  binarizer: {fileID: 8162675401803463596}
 --- !u!1 &7583497319278545971
 GameObject:
   m_ObjectHideFlags: 0
@@ -277,6 +248,7 @@ GameObject:
   - component: {fileID: 2576821758812138174}
   - component: {fileID: 7418355990494605036}
   - component: {fileID: 2885496605618352954}
+  - component: {fileID: 7848603666492034978}
   m_Layer: 0
   m_Name: "Player-\u5305\u542B\u6D4B\u8BD5\u89D2\u8272"
   m_TagString: Player
@@ -472,7 +444,7 @@ MonoBehaviour:
   wallCheckDistance: 0.55
   moveSpeed: 3
   jumpForce: 5
-  dashSpeed: 5
+  dashDirection: {x: 0, y: 0}
   canSlide: 1
   slideSpeedMulti: 0.35
   slideDuration: 2
@@ -480,6 +452,12 @@ MonoBehaviour:
   dashColdDown: 2
   wallJumpDirection: {x: 5, y: 5}
   canJumpInAir: 1
+  hitDirection: {x: 0, y: 0}
+  multiGetHit: 0
+  canAttack: 0
+  getHitDirection: 0
+  canGetHit: 0
+  originalHP: 0
 --- !u!114 &2885496605618352954
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -497,3 +475,17 @@ MonoBehaviour:
   m_isFiring: 0
   m_enableRedirectTransform: 0
   m_redirectTarget: {fileID: 0}
+--- !u!114 &7848603666492034978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7583497319278545971}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20cf9df953bbb6e4b8a7ca456aca7617, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skeletonAnimation: {fileID: 864571295484825739}
+  binarizer: {fileID: 0}

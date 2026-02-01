@@ -54,10 +54,30 @@ namespace Gameplay.AnimeAndCostume.Editor
                 animsEnum.AppendLine($"        {enumName} = {i + 1},");
             }
 
+            // 生成插槽名称映射
+            StringBuilder slotMapping = new StringBuilder();
+            for (int i = 0; i < skeletonData.Slots.Count; i++)
+            {
+                string slotName = skeletonData.Slots.Items[i].Name;
+                string enumName = SanitizeName(slotName);
+                slotMapping.AppendLine($"            {{ SpineSlots.{enumName}, \"{slotName}\" }},");
+            }
+
+            // 生成动画名称映射
+            StringBuilder animMapping = new StringBuilder();
+            for (int i = 0; i < skeletonData.Animations.Count; i++)
+            {
+                string animName = skeletonData.Animations.Items[i].Name;
+                string enumName = SanitizeName(animName);
+                animMapping.AppendLine($"            {{ SpineAnimations.{enumName}, \"{animName}\" }},");
+            }
+
             // 生成完整代码
             string code = $@"// 此文件由 SpineEnumGenerator 自动生成
 // 请勿手动修改
 // 来源: {asset.name}
+
+using System.Collections.Generic;
 
 namespace Gameplay.AnimeAndCostume
 {{
@@ -74,6 +94,42 @@ namespace Gameplay.AnimeAndCostume
     public enum SpineAnimations
     {{
 {animsEnum}    }}
+
+    /// <summary>
+    /// 枚举到Spine原始名称的映射工具
+    /// </summary>
+    public static class SpineNames
+    {{
+        /// <summary>
+        /// 插槽枚举 -> Spine原始名称
+        /// </summary>
+        public static readonly Dictionary<SpineSlots, string> SlotNames = new Dictionary<SpineSlots, string>
+        {{
+{slotMapping}        }};
+
+        /// <summary>
+        /// 动画枚举 -> Spine原始名称
+        /// </summary>
+        public static readonly Dictionary<SpineAnimations, string> AnimationNames = new Dictionary<SpineAnimations, string>
+        {{
+{animMapping}        }};
+
+        /// <summary>
+        /// 获取插槽的Spine原始名称
+        /// </summary>
+        public static string GetSlotName(SpineSlots slot)
+        {{
+            return SlotNames.TryGetValue(slot, out string name) ? name : slot.ToString();
+        }}
+
+        /// <summary>
+        /// 获取动画的Spine原始名称
+        /// </summary>
+        public static string GetAnimationName(SpineAnimations anim)
+        {{
+            return AnimationNames.TryGetValue(anim, out string name) ? name : anim.ToString();
+        }}
+    }}
 }}
 ";
 
