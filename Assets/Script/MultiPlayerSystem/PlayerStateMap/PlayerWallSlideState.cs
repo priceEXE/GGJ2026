@@ -35,7 +35,7 @@ namespace GGJ2026
             }
 
             HandleSlide();
-            if (owner.PressJumpKey())
+            if (owner.PressSpecialKey("Jump"))
             {
                 owner.stateMachine.ChangeState(PlayerStates.WallJump);
                 return; // 重要：立即返回，防止后续逻辑覆盖状态
