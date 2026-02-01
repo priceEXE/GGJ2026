@@ -26,23 +26,11 @@ namespace GGJ2026
                 return _instance;
             }
         }
-        private Player _player;
         public GuideTextUI guideTextUI;
         // public PlayerIM input;
         //public Dictionary<string, InputAction> playerMaps = new (){{"P1", input.P1}}
         // public PlayerInputManager playerInputManager;
-        public Player player
-        {
-            get
-            {
-                if (_player == null)
-                {
-                    _player = FindObjectOfType<Player>();
-                }
-                return _player;
-            }
-        }
-
+        public Dictionary<string, PlayerInstance> players;
         private void Start()
         {
             itemCreateTimer = 0;

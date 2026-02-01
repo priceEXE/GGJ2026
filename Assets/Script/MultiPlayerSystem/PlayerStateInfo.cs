@@ -8,7 +8,7 @@ namespace GGJ2026
         [SerializeField, Tooltip("墙壁射线检测的长度")] public float wallCheckDistance;
         [SerializeField, Tooltip("移动速度")] public float moveSpeed;
         [SerializeField, Tooltip("跳跃高度")] public float jumpForce;
-        [SerializeField, Tooltip("冲刺速度")] public float dashSpeed;
+        [SerializeField, Tooltip("弹跳冲刺速度")] public Vector2 dashDirection;
         [SerializeField, Tooltip("能否贴墙")]public bool canSlide;
         [SerializeField, Tooltip("贴墙下降速度 = this * yVelocity")] public float slideSpeedMulti;
         [SerializeField, Tooltip("贴墙持续时间")] public float slideDuration;
@@ -21,5 +21,6 @@ namespace GGJ2026
         [Tooltip("能否攻击")] public bool canAttack;
         [Tooltip("受击方向")] public int getHitDirection;
         [Tooltip("能否受击")] public bool canGetHit;
+        [SerializeField, Tooltip("初始生命值数量")] public int originalHP;
     }
 }
